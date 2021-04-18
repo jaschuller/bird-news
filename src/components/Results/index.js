@@ -1,3 +1,6 @@
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+
 // TODO Results display the following (up to 5 items on initial return):
 // Username
 // Avatar of the author
@@ -11,3 +14,18 @@
 
 // TODO Load more should update the Filter with unique hashtags from next set of results
 // Consider how this interacts with those which have already been filtered out**
+
+class Results extends Component {
+  componentDidMount() {}
+
+  render() {
+    const { children } = this.props;
+    return <div>Placeholder results</div>;
+  }
+}
+
+Results.propTypes = {
+  children: PropTypes.node,
+};
+
+export default Results;

@@ -1,16 +1,15 @@
 
 <p align="center">
-    <h3 align="center">Simple React Webpack Babel Starter Kit<br></h3>
+    <h3 align="center">Bird News: An app for getting the latest tweets<br></h3>
 </p>
 
 
 <p align="center">
-  Tired of complicated starters with more than 250MB of dependencies which are hard to understand and modify? This is for you!
-  This is a simple react application without redux, stylesheets or other set frameworks. It's only meant to get you started and the rest if up to you. Our goal for is to keep things simple and give you the freedom to select your own frameworks to add on top of this one.
+  Look at some tweets without the hassle of having to go to twitter! This quick and dirty app will let you search and filter like a real twit to yours hearts content!
 </p>
 
 ### Demo
-https://murmuring-fjord-36537.herokuapp.com/
+TODO link to published Heroku version when this is ready
 
 ### Prerequisites
 * You'll need to have [git](https://git-scm.com/) and [node](https://nodejs.org/en/) installed in your system.
@@ -19,7 +18,7 @@ https://murmuring-fjord-36537.herokuapp.com/
 * Fork and clone the project:
 
 ```
-git clone https://github.com/ReactJSResources/react-webpack-babel.git
+git clone https://github.com/jaschuller/bird-news.git
 ```
 
 * Then install the dependencies:
@@ -28,7 +27,7 @@ git clone https://github.com/ReactJSResources/react-webpack-babel.git
 npm install
 ```
 
-* Run development server:
+* Run development server: TODO Update this to real deal
 
 ```
 npm run dev
@@ -56,6 +55,3 @@ To run linting, run:
 ```
 npm run lint
 ```
-
-### Contribute
-Please contribute to the project if you know how to make it better, including this README :)
