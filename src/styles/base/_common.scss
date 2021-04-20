@@ -9,6 +9,15 @@ h1 {
   font-size: 30px;
   margin: 15px;
 }
+.twitterSearch {
+  height: 30px;
+  border-color: lightgray;
+  border-radius: 5px;
+}
+.twitterSearch:focus {
+  border-color: darkgrey;
+  outline: none;
+}
 .hashtagComponentCard {
   width: 300px;
   height: 300px;
@@ -24,5 +33,10 @@ h1 {
   font-size: 18px;
   border-radius: 30px;
   margin: 5px;
+}
+
+.hashtagButton:focus,
+.hashtagButton:active {
+  border-color: darkgrey;
   outline: none;
 }

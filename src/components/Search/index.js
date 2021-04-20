@@ -33,12 +33,13 @@ class Search extends Component {
     return (
       <form onSubmit={onSubmit}>
         <input
+          className="twitterSearch"
+          placeholder="Search by keyword"
           type="text"
           value={value}
           onChange={onChange}
           ref={(el) => (this.input = el)}
         />
-        <button type="submit">{children}</button>
       </form>
     );
   }

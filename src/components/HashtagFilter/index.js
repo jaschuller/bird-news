@@ -7,15 +7,6 @@ import PropTypes from "prop-types";
 // Designs appear to use a light blue background color with a dark blue test color
 // On click of a Hashtag, filter component updates to only show unique list of hashtags associated with the new results *Good scenario for a jest test*
 
-// Sample list, this needs to get replaced with the results from Twitter API call
-const sampleTags = [
-  "#coding",
-  "#Python",
-  "#ComputerScience",
-  "#gitmergememes",
-  "#Engineering",
-];
-
 // Build up a list of buttons given an array of hashtags
 function BuildHashtagList(HashtagList) {
   return HashtagList.map((Hashtag) => (
@@ -25,13 +16,13 @@ function BuildHashtagList(HashtagList) {
   ));
 }
 
-const HashtagButtonElements = BuildHashtagList(sampleTags);
-
 class HashtagFilter extends Component {
   componentDidMount() {}
 
   render() {
-    const { value, onChange, children } = this.props;
+    const { hashTags, value, onChange, children } = this.props;
+    console.log("the tags are " + { hashTags });
+    const HashtagButtonElements = BuildHashtagList(hashTags);
 
     return (
       <div className="hashtagComponentCard">
@@ -43,6 +34,7 @@ class HashtagFilter extends Component {
 }
 
 HashtagFilter.propTypes = {
+  hashTags: PropTypes.array,
   value: PropTypes.string,
   onChange: PropTypes.func,
   children: PropTypes.node,
