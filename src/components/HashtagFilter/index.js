@@ -17,7 +17,7 @@ class HashtagFilter extends Component {
     const { hashTags, filterFunction } = this.props;
     let HashtagButtonElements = null;
 
-    if (hashTags) {
+    if (hashTags && hashTags.length !== 0) {
       // Remove duplicate hashtags
       let uniqueTags = [];
       hashTags.forEach((tag) => {

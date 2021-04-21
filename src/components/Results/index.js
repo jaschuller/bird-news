@@ -112,7 +112,7 @@ function BuildTweetHashtag(hashtagButtonText) {
  */
 function BuildLoadMoreButton(loadMoreFunction) {
   return (
-    <button className="loadMore" onClick={loadMoreFunction}>
+    <button className="loadMore" onClick={loadMoreFunction} key="loadMore">
       Load more
     </button>
   );
@@ -131,9 +131,13 @@ class Results extends Component {
 
     // Build the table when results are found
     if (foundTweets && foundTweets.statuses) {
-      TweetTableRows = BuildTweetTable(foundTweets, loadMoreFunction);
-
-      return <div className="tweetResultsCard">{TweetTableRows}</div>;
+      if (foundTweets.statuses.length == 0) {
+        console.log("No results!");
+        return "No results!";
+      } else {
+        TweetTableRows = BuildTweetTable(foundTweets, loadMoreFunction);
+        return <div className="tweetResultsCard">{TweetTableRows}</div>;
+      }
     } else {
       return null;
     }

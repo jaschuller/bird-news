@@ -71,6 +71,7 @@ class App extends Component {
 
   /**
    * Use Axios for Fetch call to Twitter API
+   * TODO this appears to max out at 15 results, need to figure out why
    *
    * @param searchTerm  text to be used for searching popular tweets
    * @param newCount integer which determines the number results to grab (if not specified defaults to 5)
