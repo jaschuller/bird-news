@@ -29,7 +29,7 @@ class Search extends Component {
   }
 
   render() {
-    const { value, onChange, onSubmit, children } = this.props;
+    const { value, onChange, onSubmit } = this.props;
     return (
       <form onSubmit={onSubmit}>
         <input

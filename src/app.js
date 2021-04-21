@@ -46,6 +46,7 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.loadMore = this.loadMore.bind(this);
+    this.filterByHashtag = this.filterByHashtag.bind(this);
   }
 
   // Loop through the tweet results and build up a list of Results components
@@ -117,16 +118,47 @@ class App extends Component {
     this.fetchSearchPopularTweets(searchTerm, newCount);
   }
 
+  filterByHashtag(event) {
+    console.log("clicked");
+
+    let clickedHashTagTextContent = event.target.textContent;
+    // Given the text of the element which received the click, update the
+    // state of hashTags and foundTweets
+
+    const { hashTags, foundTweets } = this.state;
+
+    // Loop through the results and build up the list of *Unique* hashtags
+    let filteredTweets = { name: "filtered", statuses: [] };
+    let filteredHashtags = [];
+
+    foundTweets.statuses.forEach(async function (status) {
+      // Check if tweet contains the hashtag
+      status.entities.hashtags.forEach(async function (hashtag) {
+        if (hashtag.text == clickedHashTagTextContent) {
+          filteredTweets.statuses.push(status);
+        }
+      });
+    });
+
+    let newTags = [];
+    filteredTweets.statuses.forEach(async function (status) {
+      status.entities.hashtags.forEach(async function (hashtag) {
+        newTags.push(hashtag.text);
+      });
+    });
+
+    debugger;
+
+    // this.setState({ hashTags: foundTweets });
+    this.setState({ foundTweets: filteredTweets, hashTags: newTags });
+    // this.setState({ foundTweets: filteredTweets });
+    // this.setFoundTweets(filteredTweets);
+    // this.fetchSearchPopularTweets(searchTerm, newCount);
+  }
+
   render() {
     // ES6 use destructuring to set values
-    const {
-      searchTerm,
-      foundTweets,
-      hashTags,
-      searchKey,
-      error,
-      isLoading,
-    } = this.state;
+    const { searchTerm, foundTweets, hashTags, error } = this.state;
 
     return (
       <div className="page">
@@ -151,7 +183,10 @@ class App extends Component {
                 loadMoreFunction={this.loadMore}
               ></Results>
               <div className="spacer" />
-              <HashtagFilter hashTags={hashTags}></HashtagFilter>
+              <HashtagFilter
+                hashTags={hashTags}
+                filterFunction={this.filterByHashtag}
+              ></HashtagFilter>
             </div>
           </div>
         )}

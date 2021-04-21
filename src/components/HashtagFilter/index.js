@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 // TODO On click of a Hashtag, filter component updates to only show unique list of hashtags associated with the new results *Good scenario for a jest test*
 
 // Build up a list of buttons given an array of hashtags
-function BuildHashtagList(HashtagList) {
+function BuildHashtagList(HashtagList, filterFunction) {
   return HashtagList.map((Hashtag) => (
-    <button className="hashtagButton" key={Hashtag}>
+    <button className="hashtagButton" key={Hashtag} onClick={filterFunction}>
       {Hashtag}
     </button>
   ));
@@ -16,12 +16,19 @@ class HashtagFilter extends Component {
   componentDidMount() {}
 
   render() {
-    const { hashTags, value, onChange, children } = this.props;
-
+    const { hashTags, filterFunction } = this.props;
     let HashtagButtonElements = null;
 
     if (hashTags) {
-      HashtagButtonElements = BuildHashtagList(hashTags);
+      // Remove duplicate hashtags
+      let uniqueTags = [];
+      hashTags.forEach((tag) => {
+        if (!uniqueTags.includes(tag)) {
+          uniqueTags.push(tag);
+        }
+      });
+
+      HashtagButtonElements = BuildHashtagList(uniqueTags, filterFunction);
 
       return (
         <div className="hashtagComponentCard">
@@ -37,9 +44,8 @@ class HashtagFilter extends Component {
 
 HashtagFilter.propTypes = {
   hashTags: PropTypes.array,
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-  children: PropTypes.node,
+  filterFunction: PropTypes.func.isRequired,
 };
 
 export default React.memo(HashtagFilter);
+// export default HashtagFilter;
