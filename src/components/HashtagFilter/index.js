@@ -1,11 +1,7 @@
 import React, { Component } from "react";
-import HashtagButton from "../HashtagButton";
 import PropTypes from "prop-types";
 
-// TODO From the search results, build a list of all the hashtags associated with
-// them and display in a free-flowing layout each tag as a button with corners rounded.
-// Designs appear to use a light blue background color with a dark blue test color
-// On click of a Hashtag, filter component updates to only show unique list of hashtags associated with the new results *Good scenario for a jest test*
+// TODO On click of a Hashtag, filter component updates to only show unique list of hashtags associated with the new results *Good scenario for a jest test*
 
 // Build up a list of buttons given an array of hashtags
 function BuildHashtagList(HashtagList) {

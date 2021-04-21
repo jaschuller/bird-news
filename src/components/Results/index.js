@@ -1,26 +1,12 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-// TODO Consider "Load more" component to lazy load the next 5 tweets into the results
-// this will either be part of this Results component or its on separate component.
-
 // TODO Render URL portion of the tweet as a link
-
-// TODO Load more should update the Filter with unique hashtags from next set of results
-// Consider how this interacts with those which have already been filtered out**
 
 let alternatingBackground = "rowWhite";
 
 // Build up the table of tweet results
 function BuildTweetTable(foundTweets) {
-  /*
-  return HashtagList.map((Hashtag) => (
-    <button className="hashtagButton" key={Hashtag}>
-      {Hashtag}
-    </button>
-  ));
-  */
-
   let profileImageURL;
   let username;
   let tweetText;
@@ -35,7 +21,6 @@ function BuildTweetTable(foundTweets) {
     // tweetText = linkify(status.text);
 
     status.entities.hashtags.forEach(async function (hashtag) {
-      console.log(hashtag.text);
       hashTags.push(BuildTweetHashtag("#" + hashtag.text));
     });
 
@@ -65,7 +50,7 @@ function linkify(text) {
 
 function BuildTweetRow(profileImageURL, username, tweetText, hashTags) {
   return (
-    <div className={alternatingBackground}>
+    <div key={tweetText} className={alternatingBackground}>
       <br />
       <img className="tweetUserImage" src={profileImageURL} alt="User icon" />
       <div className="tweetDetails">
@@ -81,7 +66,11 @@ function BuildTweetRow(profileImageURL, username, tweetText, hashTags) {
 
 function BuildTweetHashtag(hashtagButtonText) {
   return (
-    <button className="hashtagButtonDisabled" disabled="disabled">
+    <button
+      key={hashtagButtonText}
+      className="hashtagButtonDisabled"
+      disabled="disabled"
+    >
       {hashtagButtonText}
     </button>
   );
@@ -91,20 +80,31 @@ class Results extends Component {
   componentDidMount() {}
 
   render() {
-    const { foundTweets } = this.props;
+    const { foundTweets, loadMoreFunction } = this.props;
 
     let TweetTableRows;
+
+    // reset row class so it doesn't switch on a render with no results
+    alternatingBackground = "rowWhite";
 
     // Build the table when results are found
     if (foundTweets && foundTweets.statuses) {
       TweetTableRows = BuildTweetTable(foundTweets);
-    }
 
-    return <div className="tweetResultsCard">{TweetTableRows}</div>;
+      return (
+        <React.Fragment>
+          <div className="tweetResultsCard">{TweetTableRows}</div>
+          <button onClick={loadMoreFunction}>Load more</button>
+        </React.Fragment>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
 Results.propTypes = {
+  loadMoreFunction: PropTypes.func,
   foundTweets: PropTypes.object,
   children: PropTypes.node,
 };

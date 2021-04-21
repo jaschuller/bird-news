@@ -17,9 +17,12 @@ const PATH_BASE = `${PROXY_SERVER}${TWITTER_API}`;
 const PATH_SEARCH = "/search/tweets.json";
 const PARAM_RESULT_TYPE = "result_type=popular";
 const PARAM_SEARCH = "q=";
+const PARAM_FETCH_COUNT = "count=";
 
-// Get only the first 5 tweets per designs
-const PARAM_COUNT = "count=5";
+// Specify the initial tweet count to fetch
+const INITIAL_FETCH_COUNT = 5;
+// Specify the number of extra results to grab on "Load more" click
+const LOAD_MORE_COUNT = 5;
 
 // App is a derived class since it extends component
 class App extends Component {
@@ -30,10 +33,11 @@ class App extends Component {
     super(props);
 
     this.state = {
-      searchTerm: null,
+      searchTerm: "",
       hashTags: null,
       foundTweets: null,
       error: null,
+      maxResults: INITIAL_FETCH_COUNT,
     };
 
     // bind the methods is bound to the class
@@ -52,23 +56,25 @@ class App extends Component {
     let foundTags = [];
     result.statuses.forEach(async function (status) {
       status.entities.hashtags.forEach(async function (hashtag) {
-        console.log("push " + hashtag.text + " into the list");
         foundTags.push(hashtag.text);
       });
     });
 
-    // Set the state to use the hashtags fon
-    // this.state.hashTags = foundTags;
     this.setState({ hashTags: foundTags });
   }
 
   // Use Axios for Fetch call to Twitter API
-  fetchSearchPopularTweets(searchTerm, page = 0) {
+  fetchSearchPopularTweets(searchTerm, newCount) {
     this.setState({ isLoading: true });
+    let maxResults = INITIAL_FETCH_COUNT;
+
+    if (newCount) {
+      maxResults = newCount;
+    }
 
     axios
       .get(
-        `${PATH_BASE}${PATH_SEARCH}?${PARAM_RESULT_TYPE}&${PARAM_SEARCH}${searchTerm}&${PARAM_COUNT}`,
+        `${PATH_BASE}${PATH_SEARCH}?${PARAM_RESULT_TYPE}&${PARAM_SEARCH}${searchTerm}&${PARAM_FETCH_COUNT}${maxResults}`,
         {
           headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -83,11 +89,12 @@ class App extends Component {
   componentDidMount() {
     console.log("mounting...");
 
-    this.fetchSearchPopularTweets("Dogs");
+    // this.fetchSearchPopularTweets("Dogs");
   }
 
   // fetch the tweets when search is submitted
   onSearchSubmit(event) {
+    this.setState({ maxResults: INITIAL_FETCH_COUNT });
     const { searchTerm } = this.state;
 
     this.fetchSearchPopularTweets(searchTerm);
@@ -102,7 +109,12 @@ class App extends Component {
   }
 
   loadMore(event) {
-    this.fetchSearchPopularTweets(searchTerm);
+    const { maxResults, searchTerm } = this.state;
+    let newCount = maxResults + LOAD_MORE_COUNT;
+    // When user clicks load more, grab 5 more results in next search
+    // Hacky solution, TODO implement a clear way
+    this.setState({ maxResults: newCount });
+    this.fetchSearchPopularTweets(searchTerm, newCount);
   }
 
   render() {

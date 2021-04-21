@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 // TODO: Search needs to have a magnifying glass icon, and placeholder? text "Search for keyword"
 // Acceptance criteria "c. Ability to view the results of the search on key up" assume this means key up of enter key? Check with PO/Designer
 
-// For key-up search, be aware of rate limiting and implement some sort of
+// TODO For key-up search, be aware of rate limiting and implement some sort of
 // throttle/debounce to prevent it
 
 // The Twitter API does not support CORS, so you will need to implement an
@@ -49,7 +49,6 @@ Search.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  children: PropTypes.node.isRequired,
 };
 
 export default Search;
