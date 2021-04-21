@@ -1,3 +1,5 @@
+/* TODO styles are not responsive, and don't work well with mobile devices */
+
 /* START shared or common application styles */
 body {
   background-color: f8f9f9;
@@ -109,5 +111,20 @@ h3 {
 .tweetDetails {
   padding-top: 0px;
   padding-left: 60px;
+}
+
+.loadMore {
+  width: 100%;
+  height: 60px;
+  border-style: none;
+  color: #5790c1;
+  background-color: white;
+  font-size: 19px;
+}
+.loadMore:focus,
+.loadMore:active {
+  border-style: auto;
+  border-color: darkgrey;
+  background-color: darkgrey;
 }
 /* END Results component */

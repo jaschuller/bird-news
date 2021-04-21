@@ -12,7 +12,7 @@ let alternatingBackground = "rowWhite";
  * @param foundTweets object containing the response data from twitter search api
  * @return dom elements displaying the relevant data foundTweets
  */
-function BuildTweetTable(foundTweets) {
+function BuildTweetTable(foundTweets, loadMoreFunction) {
   let profileImageURL;
   let username;
   let tweetText;
@@ -42,6 +42,8 @@ function BuildTweetTable(foundTweets) {
     // Clear out hashtag array so it doesn't go into other results
     hashTags = [];
   });
+
+  rowElements.push(BuildLoadMoreButton(loadMoreFunction));
 
   return rowElements;
 }
@@ -102,6 +104,20 @@ function BuildTweetHashtag(hashtagButtonText) {
   );
 }
 
+/**
+ * Builds the button which will load additional results from the twitter api
+ *
+ * @param loadMoreFunction text to be displayed on the hashtag
+ * @return a button bound to a function which will load additional tweet results on click
+ */
+function BuildLoadMoreButton(loadMoreFunction) {
+  return (
+    <button className="loadMore" onClick={loadMoreFunction}>
+      Load more
+    </button>
+  );
+}
+
 class Results extends Component {
   componentDidMount() {}
 
@@ -115,14 +131,9 @@ class Results extends Component {
 
     // Build the table when results are found
     if (foundTweets && foundTweets.statuses) {
-      TweetTableRows = BuildTweetTable(foundTweets);
+      TweetTableRows = BuildTweetTable(foundTweets, loadMoreFunction);
 
-      return (
-        <React.Fragment>
-          <div className="tweetResultsCard">{TweetTableRows}</div>
-          <button onClick={loadMoreFunction}>Load more</button>
-        </React.Fragment>
-      );
+      return <div className="tweetResultsCard">{TweetTableRows}</div>;
     } else {
       return null;
     }
