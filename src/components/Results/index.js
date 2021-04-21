@@ -5,13 +5,18 @@ import PropTypes from "prop-types";
 
 let alternatingBackground = "rowWhite";
 
-// Build up the table of tweet results
+/**
+ * Build up the table of tweet results. An alternating style is added to make each tweet
+ * stand out in the UI
+ *
+ * @param foundTweets object containing the response data from twitter search api
+ * @return dom elements displaying the relevant data foundTweets
+ */
 function BuildTweetTable(foundTweets) {
   let profileImageURL;
   let username;
   let tweetText;
   let hashTags = [];
-
   let rowElements = [];
 
   foundTweets.statuses.forEach(async function (status) {
@@ -41,6 +46,12 @@ function BuildTweetTable(foundTweets) {
   return rowElements;
 }
 
+/**
+ * Parsed the passed in text to identify any links within and turn them into anchor dom elements
+ *
+ * @param text raw text to be parsed and massaged
+ * @return text containing any identified urls transformed into anchor elements
+ */
 function linkify(text) {
   var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
   return text.replace(urlRegex, function (url) {
@@ -48,6 +59,15 @@ function linkify(text) {
   });
 }
 
+/**
+ * Builds up an individual row (as a div) to render a tweet
+ *
+ * @param profileImageURL url which points at the image icon from the user who posted the tweet
+ * @param username username of the user who posted the tweet
+ * @param tweetText text content of the tweet
+ * @param hashTags array of (disabled) button elements for unique hashtags within the tweet
+ * @return a div element containing the set of dom elements which represent the tweet
+ */
 function BuildTweetRow(profileImageURL, username, tweetText, hashTags) {
   return (
     <div key={tweetText} className={alternatingBackground}>
@@ -64,6 +84,12 @@ function BuildTweetRow(profileImageURL, username, tweetText, hashTags) {
   );
 }
 
+/**
+ * Builds up an individual (disabled) button div which represents a hashtag from the tweet content
+ *
+ * @param hashtagButtonText text to be displayed on the hashtag
+ * @return a disabled button element styled to look like a hashtag
+ */
 function BuildTweetHashtag(hashtagButtonText) {
   return (
     <button

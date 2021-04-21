@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-// TODO On click of a Hashtag, filter component updates to only show unique list of hashtags associated with the new results *Good scenario for a jest test*
-
 // Build up a list of buttons given an array of hashtags
 function BuildHashtagList(HashtagList, filterFunction) {
   return HashtagList.map((Hashtag) => (
@@ -48,4 +46,3 @@ HashtagFilter.propTypes = {
 };
 
 export default React.memo(HashtagFilter);
-// export default HashtagFilter;

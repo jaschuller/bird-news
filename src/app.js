@@ -3,12 +3,17 @@ import axios from "axios";
 import Search from "./components/Search";
 import Results from "./components/Results";
 import HashtagFilter from "./components/HashtagFilter";
-import { forEach } from "lodash";
+
+// ** Deliverable is a zip file containing packaged code project (no node_modules directory)
+// ** and a doc describing how to build/run the frontend (start the server, proxy, run tests, etc)
 
 // Use cors-anywhere project deployed to heroku as a proxy server, in order to get around cross origin errors
 const PROXY_SERVER = "https://schuller-proxy.herokuapp.com/";
 
+// Twitter API documentation used in this project can be found below
 // https://developer.twitter.com/en/docs/twitter-api/v1/tweets/search/api-reference/get-search-tweets
+// Twitter authentication docs https://developer.twitter.com/en/docs/authentication/oauth-2-0
+
 const token =
   "AAAAAAAAAAAAAAAAAAAAAI4OHgEAAAAAlbk0HSIAqcc3havrrU9j2NeAQ34%3DzJmzwHuQerd8JJ2TeuHfqwKgBt6bK4tk93w3ocBB2vPuKMF3cG";
 axios.defaults.headers.common = { Authorization: `bearer ${token}` };
@@ -64,7 +69,13 @@ class App extends Component {
     this.setState({ hashTags: foundTags });
   }
 
-  // Use Axios for Fetch call to Twitter API
+  /**
+   * Use Axios for Fetch call to Twitter API
+   *
+   * @param searchTerm  text to be used for searching popular tweets
+   * @param newCount integer which determines the number results to grab (if not specified defaults to 5)
+   * @return object containing the results pulled from twitter API
+   */
   fetchSearchPopularTweets(searchTerm, newCount) {
     this.setState({ isLoading: true });
     let maxResults = INITIAL_FETCH_COUNT;
@@ -86,14 +97,13 @@ class App extends Component {
       .catch((error) => this.setState({ error }));
   }
 
-  // After Application has mounted, do an initial fetch to make it interesting for the user
+  // After Application has mounted, we can do an initial fetch to make it interesting for the user
   componentDidMount() {
-    console.log("mounting...");
-
+    console.log("mounting of application complete");
     // this.fetchSearchPopularTweets("Dogs");
   }
 
-  // fetch the tweets when search is submitted
+  // Fired when the enter button is pressed while focus is on the searchbox
   onSearchSubmit(event) {
     this.setState({ maxResults: INITIAL_FETCH_COUNT });
     const { searchTerm } = this.state;
@@ -104,32 +114,34 @@ class App extends Component {
     event.preventDefault();
   }
 
+  // Fired when the user types text into the searchbox
+  // This keeps the search term (for finding tweets) up to date
+  // in preparation for enter event to fire the fetch against twitter API
   onSearchChange(event) {
     this.setState({ searchTerm: event.target.value });
-    // console.log(event.target.value);
   }
 
+  // Handles loading of additional results
   loadMore(event) {
     const { maxResults, searchTerm } = this.state;
     let newCount = maxResults + LOAD_MORE_COUNT;
     // When user clicks load more, grab 5 more results in next search
-    // Hacky solution, TODO implement a clear way
+    // Hacky solution, TODO implement a better solution/lazy load
     this.setState({ maxResults: newCount });
     this.fetchSearchPopularTweets(searchTerm, newCount);
   }
 
+  // Fired when a button is clicked withing the HashtagFilter component
+  // Parse the the text of the button clicked, and rebuild the tweet list
+  // using only tweets that contain that specific hashtag
   filterByHashtag(event) {
-    console.log("clicked");
-
+    // Grab the text of the element which received the click
     let clickedHashTagTextContent = event.target.textContent;
-    // Given the text of the element which received the click, update the
-    // state of hashTags and foundTweets
 
-    const { hashTags, foundTweets } = this.state;
+    const { foundTweets } = this.state;
 
     // Loop through the results and build up the list of *Unique* hashtags
     let filteredTweets = { name: "filtered", statuses: [] };
-    let filteredHashtags = [];
 
     foundTweets.statuses.forEach(async function (status) {
       // Check if tweet contains the hashtag
@@ -140,6 +152,7 @@ class App extends Component {
       });
     });
 
+    // Rebuild the list of hashtags based on filtered tweets
     let newTags = [];
     filteredTweets.statuses.forEach(async function (status) {
       status.entities.hashtags.forEach(async function (hashtag) {
@@ -147,15 +160,13 @@ class App extends Component {
       });
     });
 
-    debugger;
-
-    // this.setState({ hashTags: foundTweets });
     this.setState({ foundTweets: filteredTweets, hashTags: newTags });
-    // this.setState({ foundTweets: filteredTweets });
-    // this.setFoundTweets(filteredTweets);
-    // this.fetchSearchPopularTweets(searchTerm, newCount);
   }
 
+  // Main render function for the application, components are as follows:
+  // Search: component for search box for user to enter the tweet search term
+  // Results: component for displaying the tweets in the UI
+  // HashtagFilter: component for displaying a list of unique hashtags found in tweet results
   render() {
     // ES6 use destructuring to set values
     const { searchTerm, foundTweets, hashTags, error } = this.state;
@@ -176,7 +187,6 @@ class App extends Component {
                 onSubmit={this.onSearchSubmit}
               />
             </div>
-
             <div className="inlineResponsiveComponents">
               <Results
                 foundTweets={foundTweets}
