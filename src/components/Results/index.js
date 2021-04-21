@@ -1,57 +1,112 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-// TODO Results display the following (up to 5 items on initial return):
-// Username
-// Avatar of the author
-// Url of the tweet
-
 // TODO Consider "Load more" component to lazy load the next 5 tweets into the results
 // this will either be part of this Results component or its on separate component.
 
-// Consider Search as part of this component, since it is the same dimensions it might be
-// simpler to build it in this component as a first pass
+// TODO Render URL portion of the tweet as a link
 
 // TODO Load more should update the Filter with unique hashtags from next set of results
 // Consider how this interacts with those which have already been filtered out**
+
+let alternatingBackground = "rowWhite";
+
+// Build up the table of tweet results
+function BuildTweetTable(foundTweets) {
+  /*
+  return HashtagList.map((Hashtag) => (
+    <button className="hashtagButton" key={Hashtag}>
+      {Hashtag}
+    </button>
+  ));
+  */
+
+  let profileImageURL;
+  let username;
+  let tweetText;
+  let hashTags = [];
+
+  let rowElements = [];
+
+  foundTweets.statuses.forEach(async function (status) {
+    profileImageURL = status.user.profile_image_url;
+    username = "@" + status.user.name;
+    tweetText = status.text;
+    // tweetText = linkify(status.text);
+
+    status.entities.hashtags.forEach(async function (hashtag) {
+      console.log(hashtag.text);
+      hashTags.push(BuildTweetHashtag("#" + hashtag.text));
+    });
+
+    rowElements.push(
+      BuildTweetRow(profileImageURL, username, tweetText, hashTags)
+    );
+
+    if (alternatingBackground == "rowWhite") {
+      alternatingBackground = "rowGrey";
+    } else {
+      alternatingBackground = "rowWhite";
+    }
+
+    // Clear out hashtag array so it doesn't go into other results
+    hashTags = [];
+  });
+
+  return rowElements;
+}
+
+function linkify(text) {
+  var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+  return text.replace(urlRegex, function (url) {
+    return <a href="{url}">{url}</a>;
+  });
+}
+
+function BuildTweetRow(profileImageURL, username, tweetText, hashTags) {
+  return (
+    <div className={alternatingBackground}>
+      <br />
+      <img className="tweetUserImage" src={profileImageURL} alt="User icon" />
+      <div className="tweetDetails">
+        <span className="tweetUserName">{username}</span>
+        <br />
+        <span className="tweetText">{tweetText}</span>
+        <br />
+        {hashTags}
+      </div>
+    </div>
+  );
+}
+
+function BuildTweetHashtag(hashtagButtonText) {
+  return (
+    <button className="hashtagButtonDisabled" disabled="disabled">
+      {hashtagButtonText}
+    </button>
+  );
+}
 
 class Results extends Component {
   componentDidMount() {}
 
   render() {
-    console.log("inside tweets");
-    const { foundTweets, children } = this.props;
+    const { foundTweets } = this.props;
 
-    if (foundTweets) {
-      debugger;
-    }
+    let TweetTableRows;
 
+    // Build the table when results are found
     if (foundTweets && foundTweets.statuses) {
-      foundTweets.statuses.forEach(async function (status) {
-        console.log(status.user.profile_image_url);
-        console.log(status.user.name);
-        console.log(status.text);
-        status.entities.hashtags.forEach(async function (hashtag) {
-          console.log(hashtag.text);
-        });
-      });
+      TweetTableRows = BuildTweetTable(foundTweets);
     }
 
-    return <div>hello</div>;
+    return <div className="tweetResultsCard">{TweetTableRows}</div>;
   }
 }
 
 Results.propTypes = {
-  foundTweets: PropTypes.arrayOf(
-    PropTypes.shape({
-      objectID: PropTypes.string.isRequired,
-      author: PropTypes.string,
-      url: PropTypes.string,
-      num_comments: PropTypes.number,
-      points: PropTypes.number,
-    })
-  ).isRequired,
+  foundTweets: PropTypes.object,
   children: PropTypes.node,
 };
 
-export default Results;
+export default React.memo(Results);

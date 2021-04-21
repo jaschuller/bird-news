@@ -21,15 +21,21 @@ class HashtagFilter extends Component {
 
   render() {
     const { hashTags, value, onChange, children } = this.props;
-    console.log("the tags are " + { hashTags });
-    const HashtagButtonElements = BuildHashtagList(hashTags);
 
-    return (
-      <div className="hashtagComponentCard">
-        <h3 className="cardHeader">Filter by hashtag</h3>
-        {HashtagButtonElements}
-      </div>
-    );
+    let HashtagButtonElements = null;
+
+    if (hashTags) {
+      HashtagButtonElements = BuildHashtagList(hashTags);
+
+      return (
+        <div className="hashtagComponentCard">
+          <h3 className="cardHeader">Filter by hashtag</h3>
+          {HashtagButtonElements}
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
@@ -40,4 +46,4 @@ HashtagFilter.propTypes = {
   children: PropTypes.node,
 };
 
-export default HashtagFilter;
+export default React.memo(HashtagFilter);

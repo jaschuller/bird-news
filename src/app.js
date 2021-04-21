@@ -5,8 +5,6 @@ import Results from "./components/Results";
 import HashtagFilter from "./components/HashtagFilter";
 import { forEach } from "lodash";
 
-const DEFAULT_SEARCH = "";
-
 // Use cors-anywhere project deployed to heroku as a proxy server, in order to get around cross origin errors
 const PROXY_SERVER = "https://schuller-proxy.herokuapp.com/";
 
@@ -21,19 +19,7 @@ const PARAM_RESULT_TYPE = "result_type=popular";
 const PARAM_SEARCH = "q=";
 
 // Get only the first 5 tweets per designs
-const PARAM_COUNT = "count=15";
-
-let tweetResults = "none";
-
-// Placeholder tags for initial render
-// TODO remove these for final push
-const DEFAULT_TAGS = [
-  "#coding",
-  "#Python",
-  "#ComputerScience",
-  "#gitmergememes",
-  "#Engineering",
-];
+const PARAM_COUNT = "count=5";
 
 // App is a derived class since it extends component
 class App extends Component {
@@ -44,8 +30,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      searchTerm: DEFAULT_SEARCH,
-      hashTags: DEFAULT_TAGS,
+      searchTerm: null,
+      hashTags: null,
       foundTweets: null,
       error: null,
     };
@@ -55,21 +41,12 @@ class App extends Component {
     this.setFoundTweets = this.setFoundTweets.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
+    this.loadMore = this.loadMore.bind(this);
   }
 
   // Loop through the tweet results and build up a list of Results components
   setFoundTweets(result) {
     this.setState({ foundTweets: result });
-    /*
-    result.statuses.forEach(async function (status) {
-      console.log(status.user.profile_image_url);
-      console.log(status.user.name);
-      console.log(status.text);
-      status.entities.hashtags.forEach(async function (hashtag) {
-        console.log(hashtag.text);
-      });
-    });
-    */
 
     // Loop through the results and build up the list of *Unique* hashtags
     let foundTags = [];
@@ -83,14 +60,9 @@ class App extends Component {
     // Set the state to use the hashtags fon
     // this.state.hashTags = foundTags;
     this.setState({ hashTags: foundTags });
-    debugger;
   }
 
-  // Axios instead of Fetch: Substitute the native Fetch API with Axios
-  // **run npm install axios if not found
-  // You dont have to transform the returned response into JSON anymore, since axious wraps the result into a data object in JavaScript
-  // axios() uses a HTTP GET by default. You can make the call explicit with axious.get(), or use another HTTP method such as HTTP POST
-  // with axio().post.
+  // Use Axios for Fetch call to Twitter API
   fetchSearchPopularTweets(searchTerm, page = 0) {
     this.setState({ isLoading: true });
 
@@ -107,12 +79,11 @@ class App extends Component {
       .catch((error) => this.setState({ error }));
   }
 
-  // componentDidMount is one of the lifecycle methods. It is called once, when the component is mounted (put into the DOM).
-  // TODO fetch some twitter results to populate initial render when the element is first mounted
+  // After Application has mounted, do an initial fetch to make it interesting for the user
   componentDidMount() {
     console.log("mounting...");
-    // this.fetchSearchPopularTweets();
-    // console.log(tweetResults);
+
+    this.fetchSearchPopularTweets("Dogs");
   }
 
   // fetch the tweets when search is submitted
@@ -130,6 +101,10 @@ class App extends Component {
     // console.log(event.target.value);
   }
 
+  loadMore(event) {
+    this.fetchSearchPopularTweets(searchTerm);
+  }
+
   render() {
     // ES6 use destructuring to set values
     const {
@@ -141,28 +116,31 @@ class App extends Component {
       isLoading,
     } = this.state;
 
-    // debugger;
-    console.log(tweetResults);
-
     return (
       <div className="page">
         <header>
-          <h1>Bird News </h1>
-          <h4>Built by Justin Schuller</h4>
+          <h3>Tweet Feed</h3>
         </header>
         {error ? (
           <div className="statusMessage">Something went wrong</div>
         ) : (
           <div>
-            <Search
-              value={searchTerm}
-              onChange={this.onSearchChange}
-              onSubmit={this.onSearchSubmit}
-            >
-              Search for tweets
-            </Search>
-            <HashtagFilter hashTags={hashTags}></HashtagFilter>
-            <Results foundTweets={foundTweets}></Results>
+            <div className="searchComponent">
+              <Search
+                value={searchTerm}
+                onChange={this.onSearchChange}
+                onSubmit={this.onSearchSubmit}
+              />
+            </div>
+
+            <div className="inlineResponsiveComponents">
+              <Results
+                foundTweets={foundTweets}
+                loadMoreFunction={this.loadMore}
+              ></Results>
+              <div className="spacer" />
+              <HashtagFilter hashTags={hashTags}></HashtagFilter>
+            </div>
           </div>
         )}
       </div>
